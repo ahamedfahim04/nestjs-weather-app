@@ -4,10 +4,10 @@ import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 import 'dotenv/config';
 
 async function bootstrap() {
-  // 1️⃣ Start the main HTTP app
+  // Start the main HTTP app
   const app = await NestFactory.create(AppModule);
 
-  // 2️⃣ Connect the RabbitMQ microservice listener
+  // Connect the RabbitMQ microservice listener
   app.connectMicroservice<MicroserviceOptions>({
     transport: Transport.RMQ,
     options: {

@@ -1,17 +1,46 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { City } from './entities/city.entity';
+import { City, CityDocument } from './entities/city.entity';
 import { Model } from 'mongoose';
 import { CreateCityDto } from './dto/create-city.dto';
 import { UpdateCityDto } from './dto/update-city.dto';
 import axios from 'axios';
 import { ClientProxy } from '@nestjs/microservices';
 
+type OpenWeatherResponse = {
+  main: {
+    temp: number;
+    feels_like: number;
+    humidity: number;
+    pressure: number;
+  };
+  wind: {
+    speed: number;
+  };
+  weather: { description: string }[];
+};
+
+type CityWeatherResponse = {
+  _id: string;
+  city: string;
+  lat: number;
+  lon: number;
+  createdAt?: Date | string;
+  weather: {
+    temperature: number;
+    feels_like: number;
+    humidity: number;
+    pressure: number;
+    wind_speed: number;
+    weather_description: string;
+  };
+};
+
 @Injectable()
 export class CityService {
   private readonly apiKey =  process.env.OPENWEATHER_API_KEY;
 
-  constructor(@InjectModel(City.name) private cityModel: Model<City>,
+  constructor(@InjectModel(City.name) private cityModel: Model<CityDocument>,
    @Inject('WEATHER_SERVICE') private readonly weatherClient: ClientProxy,) {}
 
   async create(data: CreateCityDto): Promise<City> {
@@ -23,21 +52,13 @@ export class CityService {
     return this.cityModel.find().exec();
   }
 
-  async findOne(id: string): Promise<any> {
-  try {
-    
-    const city = await this.cityModel.findById(id).exec();
-    if (!city) {
-      throw new Error('City not found');
-    }
+  
 
-    //api url
-    const url = `https://api.openweathermap.org/data/2.5/weather?lat=${city.lat}&lon=${city.lon}&appid=${this.apiKey}&units=metric`;
+  
+  async findOne(id: string): Promise<CityWeatherResponse> {
+    const city = await this.getCityById(id);
+    const data = await this.fetchWeatherData(city.lat, city.lon);
 
-    // the api url data is stored into a const 'data'
-    const { data }: any = await axios.get(url);
-
-    // Extract the data we need from the api
     const weather = {
       temperature: data.main.temp,
       feels_like: data.main.feels_like,
@@ -47,27 +68,39 @@ export class CityService {
       weather_description: data.weather[0].description,
     };
 
-    // ✅ Send weather data to RabbitMQ
+    
     this.weatherClient.emit('weather_update', {
       cityId: city._id,
       cityName: city.city,
       ...weather,
     });
 
-    //  Combine weather data and return
+    
     return {
-      _id: city._id,
+      _id: city._id as string,
       city: city.city,
       lat: city.lat,
       lon: city.lon,
       createdAt: city.createdAt,
       weather,
     };
-  } catch (error) {
-    console.error(' Error ', error.message || error);
-    throw error;
   }
-}
+
+  
+  private async getCityById(id: string): Promise<CityDocument> {
+    const city = await this.cityModel.findById(id).exec();
+    if (!city) throw new Error('City not found');
+    return city;
+  }
+
+  
+  private async fetchWeatherData(lat: number, lon: number): Promise<OpenWeatherResponse> {
+    const url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${this.apiKey}&units=metric`;
+    const { data } = await axios.get<OpenWeatherResponse>(url);
+    return data;
+  }
+
+
 
 
   async update(id: string, data: UpdateCityDto): Promise<City | null> {

@@ -4,7 +4,7 @@ import { CityService } from './city.service';
 import { City, CitySchema } from './entities/city.entity';
 import { MongooseModule } from '@nestjs/mongoose';
 import { CityListener } from './city.listener';
-import { RabbitMQModule } from 'src/rabbitmq/rabbitmq.module';
+import { RabbitMQModule } from 'src/infrastructure/rabbitmq/rabbitmq.module';
 
 @Module({
   imports: [ RabbitMQModule, MongooseModule.forFeature([{ name: City.name, schema: CitySchema }])],
