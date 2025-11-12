@@ -14,6 +14,14 @@ export class City {
   @Prop({ required: true })
   lon: number;
 
+  @Prop({ type: Object })
+  lastWeather?: {
+    temperature: number;
+    humidity: number;
+    description: string;
+    updatedAt: Date;
+  };
+
   @Prop()
   createdAt?: Date;
 

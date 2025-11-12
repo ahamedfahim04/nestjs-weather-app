@@ -3,10 +3,12 @@ import { CityController } from './city.controller';
 import { CityService } from './city.service';
 import { City, CitySchema } from './entities/city.entity';
 import { MongooseModule } from '@nestjs/mongoose';
+import { CityListener } from './city.listener';
+import { RabbitMQModule } from 'src/rabbitmq/rabbitmq.module';
 
 @Module({
-  imports: [MongooseModule.forFeature([{ name: City.name, schema: CitySchema }])],
-  controllers: [CityController],
+  imports: [ RabbitMQModule, MongooseModule.forFeature([{ name: City.name, schema: CitySchema }])],
+  controllers: [CityController,CityListener],
   providers: [CityService]
 })
 export class CityModule {}

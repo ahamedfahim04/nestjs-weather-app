@@ -1,16 +1,18 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { City } from './entities/city.entity';
 import { Model } from 'mongoose';
 import { CreateCityDto } from './dto/create-city.dto';
 import { UpdateCityDto } from './dto/update-city.dto';
 import axios from 'axios';
+import { ClientProxy } from '@nestjs/microservices';
 
 @Injectable()
 export class CityService {
-  private readonly apiKey = '9d0ba6e36022cb7a68f03b44031864dd';
+  private readonly apiKey =  process.env.OPENWEATHER_API_KEY;
 
-  constructor(@InjectModel(City.name) private cityModel: Model<City>) {}
+  constructor(@InjectModel(City.name) private cityModel: Model<City>,
+   @Inject('WEATHER_SERVICE') private readonly weatherClient: ClientProxy,) {}
 
   async create(data: CreateCityDto): Promise<City> {
     const newCity = await new this.cityModel(data);
@@ -44,6 +46,13 @@ export class CityService {
       wind_speed: data.wind.speed,
       weather_description: data.weather[0].description,
     };
+
+    // ✅ Send weather data to RabbitMQ
+    this.weatherClient.emit('weather_update', {
+      cityId: city._id,
+      cityName: city.city,
+      ...weather,
+    });
 
     //  Combine weather data and return
     return {
