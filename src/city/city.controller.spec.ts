@@ -8,7 +8,7 @@ describe('CityController', () => {
   let controller: CityController;
   let service: CityService;
 
-  // ✅ Mock service with dummy implementations
+  // Mock service with dummy implementations
   const mockCityService = {
     create: jest.fn(),
     findAll: jest.fn(),
@@ -32,12 +32,12 @@ describe('CityController', () => {
     service = module.get<CityService>(CityService);
   });
 
-  // ✅ Basic existence test
+  // Basic existence test
   it('should be defined', () => {
     expect(controller).toBeDefined();
   });
 
-  // ✅ Test POST /city
+  //  Test POST /city
   describe('createCity', () => {
     it('should create a new city', async () => {
       const dto: CreateCityDto = { name: 'Mumbai', lat: 19.07 as any, lon: 72.87 as any };
@@ -52,7 +52,7 @@ describe('CityController', () => {
     });
   });
 
-  // ✅ Test GET /city
+  // Test GET /city
   describe('getAllCity', () => {
     it('should return all cities', async () => {
       const result = [
@@ -69,7 +69,7 @@ describe('CityController', () => {
     });
   });
 
-  // ✅ Test GET /city/:id
+  // Test GET /city/:id
   describe('getCityById', () => {
     it('should return one city by id', async () => {
       const id = '123';
@@ -84,7 +84,7 @@ describe('CityController', () => {
     });
   });
 
-  // ✅ Test PUT /city/:id
+  // Test PUT /city/:id
   describe('updateCity', () => {
     it('should update and return city', async () => {
       const id = '1';
@@ -100,7 +100,7 @@ describe('CityController', () => {
     });
   });
 
-  // ✅ Test DELETE /city/:id
+  // Test DELETE /city/:id
   describe('removeCity', () => {
     it('should delete a city and return the deleted one', async () => {
       const id = '1';
