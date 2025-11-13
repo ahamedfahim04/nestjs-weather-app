@@ -2,8 +2,7 @@ import { Module } from '@nestjs/common';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import 'dotenv/config';
 
-console.log('🐇 RabbitMQ URL:', process.env.RABBITMQ_URL);
-console.log('🐇 RabbitMQ Queue:', process.env.RABBITMQ_QUEUE);
+
 @Module({
   imports: [
     ClientsModule.register([
