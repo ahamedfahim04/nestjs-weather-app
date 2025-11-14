@@ -15,7 +15,7 @@ export class WeatherUpdateDto {
   humidity: number;
 
   @IsString()
-  description: string;
+  weather_description: string;
 
   @IsOptional()
   @IsDate()

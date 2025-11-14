@@ -3,6 +3,8 @@ import { CityModule } from './city/city.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { RabbitMQModule } from './infrastructure/rabbitmq/rabbitmq.module';
 import { ConfigModule } from '@nestjs/config';
+import { KafkaModule } from './infrastructure/kafka/kafka.module';
+
 
 @Module({
   imports: [ ConfigModule.forRoot({
@@ -10,6 +12,7 @@ import { ConfigModule } from '@nestjs/config';
     }),
     RabbitMQModule,
     CityModule, 
+    KafkaModule,
     MongooseModule.forRoot('mongodb://localhost/weather')
   ],
   controllers: [],

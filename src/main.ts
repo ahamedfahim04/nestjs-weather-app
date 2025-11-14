@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 import 'dotenv/config';
+import { KAFKA_CONSUMER_GROUP } from './infrastructure/kafka/kafka.constants';
 
 async function bootstrap() {
   // Start the main HTTP app
@@ -15,6 +16,19 @@ async function bootstrap() {
       queue: process.env.RABBITMQ_QUEUE,
       queueOptions: {
         durable: true,
+      },
+    },
+  });
+
+    
+  app.connectMicroservice<MicroserviceOptions>({
+    transport: Transport.KAFKA,
+    options: {
+      client: {
+        brokers: ['localhost:9092'],    
+      },
+      consumer: {
+        groupId: KAFKA_CONSUMER_GROUP,   
       },
     },
   });

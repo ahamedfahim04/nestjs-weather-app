@@ -13,14 +13,14 @@ describe('CityService', () => {
   let weatherClient: any;
 
   beforeEach(async () => {
-    // ✅ Create a Jest mock function for the Mongoose model (constructor-like)
+    // Create a Jest mock function for the Mongoose model (constructor-like)
     cityModel = jest.fn();
     cityModel.find = jest.fn();
     cityModel.findById = jest.fn();
     cityModel.findByIdAndUpdate = jest.fn();
     cityModel.findByIdAndDelete = jest.fn();
 
-    // ✅ Mock ClientProxy for RabbitMQ communication
+    //  Mock ClientProxy for RabbitMQ communication
     weatherClient = {
       emit: jest.fn(),
     };
@@ -40,18 +40,18 @@ describe('CityService', () => {
     expect(service).toBeDefined();
   });
 
-  // ✅ CREATE TEST
+  // CREATE TEST
   describe('create', () => {
     it('should create and save a new city', async () => {
       const mockCityData = { name: 'Mumbai', lat: 19.07, lon: 72.87 };
       const mockSavedCity = { _id: '123', ...mockCityData };
 
-      // ✅ Create a mock constructor behavior with save()
+      // Create a mock constructor behavior with save()
       const mockConstructor = jest.fn().mockImplementation(() => ({
         save: jest.fn().mockResolvedValue(mockSavedCity),
       }));
 
-      // ✅ Inject our mock constructor into the service
+      // Inject our mock constructor into the service
       (service as any).cityModel = mockConstructor;
 
       const result = await service.create(mockCityData as any);
@@ -61,7 +61,7 @@ describe('CityService', () => {
     });
   });
 
-  // ✅ FIND ALL TEST
+  // FIND ALL TEST
   describe('findAll', () => {
     it('should return all cities', async () => {
       const mockCities = [
@@ -80,7 +80,7 @@ describe('CityService', () => {
     });
   });
 
-  // ✅ FIND ONE TEST
+  // FIND ONE TEST
   describe('findOne', () => {
     it('should fetch city and weather data correctly', async () => {
       const mockCity = {
@@ -97,7 +97,7 @@ describe('CityService', () => {
         weather: [{ description: 'clear sky' }],
       };
 
-      // ✅ Mock DB and API calls
+      //  Mock DB and API calls
       cityModel.findById.mockReturnValue({
         exec: jest.fn().mockResolvedValue(mockCity),
       });
@@ -126,7 +126,7 @@ describe('CityService', () => {
     });
   });
 
-  // ✅ UPDATE TEST
+  // UPDATE TEST
   describe('update', () => {
     it('should update a city and return updated data', async () => {
       const mockUpdatedCity = { _id: '1', name: 'Mumbai Updated' };
@@ -143,7 +143,7 @@ describe('CityService', () => {
     });
   });
 
-  // ✅ REMOVE TEST
+  // REMOVE TEST
   describe('remove', () => {
     it('should delete a city and return deleted data', async () => {
       const mockDeletedCity = { _id: '1', name: 'Delhi' };

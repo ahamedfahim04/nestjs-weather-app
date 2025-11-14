@@ -6,6 +6,7 @@ import { CreateCityDto } from './dto/create-city.dto';
 import { UpdateCityDto } from './dto/update-city.dto';
 import axios from 'axios';
 import { ClientProxy } from '@nestjs/microservices';
+import { KafkaProducer } from 'src/infrastructure/kafka/kafka.producer';
 
 type OpenWeatherResponse = {
   main: {
@@ -41,7 +42,9 @@ export class CityService {
   private readonly apiKey =  process.env.OPENWEATHER_API_KEY;
 
   constructor(@InjectModel(City.name) private cityModel: Model<CityDocument>,
-   @Inject('WEATHER_SERVICE') private readonly weatherClient: ClientProxy,) {}
+   @Inject('WEATHER_SERVICE') private readonly weatherClient: ClientProxy,
+   private readonly kafkaProducer: KafkaProducer,
+  ) {}
 
   async create(data: CreateCityDto): Promise<City> {
     const newCity = await new this.cityModel(data);
@@ -71,6 +74,12 @@ export class CityService {
     
     this.weatherClient.emit('weather_update', {
       cityId: city._id,
+      cityName: city.city,
+      ...weather,
+    });
+
+    await this.kafkaProducer.emitWeatherUpdate({
+      cityId: city._id as string,
       cityName: city.city,
       ...weather,
     });

@@ -19,7 +19,7 @@ export class CityListener {
       lastWeather: {
         temperature: data.temperature,
         humidity: data.humidity,
-        description: data.description,
+        description: data.weather_description,
         updatedAt: new Date(),
       },
     });
