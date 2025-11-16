@@ -5,8 +5,10 @@ import { Model } from 'mongoose';
 import { CreateCityDto } from './dto/create-city.dto';
 import { UpdateCityDto } from './dto/update-city.dto';
 import axios from 'axios';
-import { ClientProxy } from '@nestjs/microservices';
+import 'dotenv/config';
+
 import { KafkaProducer } from 'src/infrastructure/kafka/kafka.producer';
+import { RabbitMQService } from 'src/infrastructure/rabbitmq/rabbitmq.service';
 
 type OpenWeatherResponse = {
   main: {
@@ -21,7 +23,7 @@ type OpenWeatherResponse = {
   weather: { description: string }[];
 };
 
-type CityWeatherResponse = {
+export type CityWeatherResponse = {
   _id: string;
   city: string;
   lat: number;
@@ -42,7 +44,7 @@ export class CityService {
   private readonly apiKey =  process.env.OPENWEATHER_API_KEY;
 
   constructor(@InjectModel(City.name) private cityModel: Model<CityDocument>,
-   @Inject('WEATHER_SERVICE') private readonly weatherClient: ClientProxy,
+   private readonly rabbitService: RabbitMQService,
    private readonly kafkaProducer: KafkaProducer,
   ) {}
 
@@ -72,7 +74,8 @@ export class CityService {
     };
 
     
-    this.weatherClient.emit('weather_updates', {
+    // REAL RabbitMQ Message
+    await this.rabbitService.sendToQueue('weather_updates', {
       cityId: city._id,
       cityName: city.city,
       ...weather,
@@ -104,7 +107,7 @@ export class CityService {
 
   
   private async fetchWeatherData(lat: number, lon: number): Promise<OpenWeatherResponse> {
-    const url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${this.apiKey}&units=metric`;
+    const url = `${process.env.API_URL}?lat=${lat}&lon=${lon}&appid=${this.apiKey}&units=metric`;
     const { data } = await axios.get<OpenWeatherResponse>(url);
     return data;
   }

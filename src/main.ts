@@ -7,19 +7,6 @@ import { KAFKA_CONSUMER_GROUP } from './infrastructure/kafka/kafka.constants';
 async function bootstrap() {
   // Start the main HTTP app
   const app = await NestFactory.create(AppModule);
-
-  // Connect the RabbitMQ microservice listener
-  app.connectMicroservice<MicroserviceOptions>({
-    transport: Transport.RMQ,
-    options: {
-      urls: [process.env.RABBITMQ_URL as string],
-      queue: process.env.RABBITMQ_QUEUE,
-      queueOptions: {
-        durable: true,
-      },
-    },
-  });
-
     
   app.connectMicroservice<MicroserviceOptions>({
     transport: Transport.KAFKA,

@@ -1,5 +1,5 @@
 import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
-import { CityService } from './city.service';
+import { CityService, CityWeatherResponse } from './city.service';
 import { CreateCityDto } from './dto/create-city.dto';
 import { City } from './entities/city.entity';
 import { UpdateCityDto } from './dto/update-city.dto';
@@ -20,7 +20,7 @@ export class CityController {
   }
 
   @Get(':id')
-  async getCityById(@Param('id') id: string) {
+  async getCityById(@Param('id') id: string): Promise<CityWeatherResponse> {
     return this.cityService.findOne(id);
   }
 
