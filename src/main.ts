@@ -33,7 +33,7 @@ async function bootstrap() {
     },
   });
 
-  // 3️⃣ Start both HTTP app + microservice listener
+
   await app.startAllMicroservices();
   await app.listen(process.env.PORT || 3000);
 

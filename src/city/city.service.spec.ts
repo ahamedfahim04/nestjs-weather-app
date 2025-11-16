@@ -109,7 +109,7 @@ describe('CityService', () => {
       expect(result.city).toBe('Mumbai');
       expect(result.weather.temperature).toBe(30);
       expect(weatherClient.emit).toHaveBeenCalledWith(
-        'weather_update',
+        'weather_updates',
         expect.objectContaining({
           cityId: mockCity._id,
           cityName: mockCity.city,

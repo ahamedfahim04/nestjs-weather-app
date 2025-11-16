@@ -13,9 +13,9 @@ export class KafkaConsumer {
 
   constructor(@InjectModel(City.name) private cityModel: Model<CityDocument>) {}
 
-  @MessagePattern(KAFKA_TOPIC_WEATHER)   // ⬅️ Using the constant
+  @MessagePattern(KAFKA_TOPIC_WEATHER)  
   async handleKafkaWeatherUpdate(@Payload() data: WeatherUpdateDto) {
-    this.logger.log(`🔥 Kafka Received weather update for ${data.cityName}`);
+    this.logger.log(`Kafka Received weather update for ${data.cityName}`);
 
     await this.cityModel.findByIdAndUpdate(data.cityId, {
       lastWeather: {
@@ -26,6 +26,6 @@ export class KafkaConsumer {
       },
     });
 
-    this.logger.log(`✅ Kafka Weather data saved for ${data.cityName}`);
+    this.logger.log(`Kafka Weather data saved for ${data.cityName}`);
   }
 }

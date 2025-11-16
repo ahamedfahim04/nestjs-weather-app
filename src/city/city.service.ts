@@ -72,7 +72,7 @@ export class CityService {
     };
 
     
-    this.weatherClient.emit('weather_update', {
+    this.weatherClient.emit('weather_updates', {
       cityId: city._id,
       cityName: city.city,
       ...weather,

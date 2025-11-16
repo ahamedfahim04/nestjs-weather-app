@@ -14,14 +14,14 @@ import { City, CitySchema } from 'src/city/entities/city.entity';
      MongooseModule.forFeature([{ name: City.name, schema: CitySchema }]),
     ClientsModule.register([
       {
-        name: KAFKA_CLIENT,                // Unique Kafka client name
-        transport: Transport.KAFKA,        // We are using Kafka transport
+        name: KAFKA_CLIENT,                
+        transport: Transport.KAFKA,        
         options: {
           client: {
-            brokers: ['localhost:9092'],    // Kafka broker URL
+            brokers: ['localhost:9092'],    
           },
           consumer: {
-            groupId: KAFKA_CONSUMER_GROUP,  // Consumer group ID
+            groupId: KAFKA_CONSUMER_GROUP,  
           },
         },
       },

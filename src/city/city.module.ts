@@ -10,7 +10,7 @@ import { KafkaModule } from 'src/infrastructure/kafka/kafka.module';
 
 @Module({
   imports: [ KafkaModule,  RabbitMQModule, MongooseModule.forFeature([{ name: City.name, schema: CitySchema }])],
-  controllers: [CityController,CityListener],
+  controllers: [CityController, CityListener],
   providers: [CityService]
 })
 export class CityModule {}

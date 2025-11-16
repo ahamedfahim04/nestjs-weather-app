@@ -11,7 +11,7 @@ export class CityListener {
 
   constructor(@InjectModel(City.name) private cityModel: Model<City>) {}
 
-  @EventPattern('weather_update')
+  @EventPattern('weather_updates')
   async handleWeatherUpdate(@Payload() data: WeatherUpdateDto) {
     this.logger.log(` Received weather update for ${data.cityName}`);
 

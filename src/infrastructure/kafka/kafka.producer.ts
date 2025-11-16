@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { ClientKafka } from '@nestjs/microservices';
 import { KAFKA_CLIENT, KAFKA_TOPIC_WEATHER } from './kafka.constants';
 
-// DTO for message (strict typing)
+
 export interface WeatherKafkaMessage {
   cityId: string;
   cityName: string;
@@ -21,9 +21,7 @@ export class KafkaProducer {
     private readonly kafkaClient: ClientKafka,
   ) {}
 
-  /**
-   * Emit weather update to Kafka topic
-   */
+
   async emitWeatherUpdate(data: WeatherKafkaMessage): Promise<void> {
     await this.kafkaClient.emit(KAFKA_TOPIC_WEATHER, {
       key: data.cityId,  
@@ -31,9 +29,7 @@ export class KafkaProducer {
     });
   }
 
-  /**
-   * Required to connect Kafka producer manually
-   */
+
   async onModuleInit(): Promise<void> {
     await this.kafkaClient.connect();
   }
